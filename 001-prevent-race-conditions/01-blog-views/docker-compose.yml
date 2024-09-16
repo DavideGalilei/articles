@@ -1,0 +1,39 @@
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: race_condition_test
+    networks:
+      - backend
+    healthcheck:
+      test:
+        ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d race_condition_test'"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - "data:/var/lib/postgresql/data:Z"
+
+  backend:
+    read_only: true
+    build:
+      context: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  data:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
