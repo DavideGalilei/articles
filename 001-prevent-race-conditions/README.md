@@ -414,7 +414,7 @@ Sure enough, there are multiple ways.
     ```sql
     UPDATE players p
     SET
-        money = money - $1
+        money = money - $1,
         level = level + 1
     WHERE
         p.money >= $1
