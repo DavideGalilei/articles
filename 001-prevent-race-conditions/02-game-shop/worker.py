@@ -89,7 +89,7 @@ async def upgrade_level(player_id: int):
 
     rows_updated = await Player.filter(
         id=player_id,
-        money_gte=COST,
+        money__gte=COST,  # gte = greater than or equal
     ).update(
         level=F("level") + 1,
         money=F("money") - COST,
