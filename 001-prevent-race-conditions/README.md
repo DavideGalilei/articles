@@ -233,7 +233,7 @@ In [7]: await get_views()
 Out[7]: 10
 ```
 
-The script is supposed to sent 100 concurrent requests to the API at once. I fetched the views before and after making 100 requests, and I noticed that the difference is just 2, instead of 100. Bingo!
+The script is supposed to send 100 concurrent requests to the API at once. I fetched the views before and after making 100 requests, and I noticed that the difference is just 2, instead of 100. Bingo!
 
 As I search for a solution online I stumble on an old answer from a forum, telling me to “lock the record row-wise with `SELECT FOR UPDATE`”. It makes sense, I remember learning locks in my classes, so I assume databases must have a similar built-in function.
 
