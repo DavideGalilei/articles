@@ -1,6 +1,6 @@
 # Think you're safe from Race Conditions? Think again
 
-This article aims to correct a subtle but dangerous bad practice that is often overlooked. I will demonstrate practical examples using **Python**, **FastAPI** and **PostgreSQL**, and I will provide various solutions for the problem, each with its own trade-offs. I will role-play as a junior freelance developer, making easier to understand the chain of thought.
+This article aims to correct a subtle but dangerous bad practice that is often overlooked. I will demonstrate practical examples using **Python**, **FastAPI** and **PostgreSQL**, and I will provide various solutions for the problem, each with its own trade-offs. I will role-play as a junior freelance developer, making it easier to understand the chain of thought.
 
 The following code is **unsafe**: can you spot why?
 ```python
@@ -20,7 +20,7 @@ async def buy_item(
 
     user.money -= item.cost
     await user.save(update_only=["money"])
-    # successfully boughy. TODO: add product in the database
+    # successfully bought. TODO: add product in the database
     ...
 
     return {"bought": bought}
