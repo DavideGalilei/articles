@@ -492,6 +492,9 @@ It also covers:
 
 Oh, and by the way, you might find online solutions suggesting to use `LOCK TABLE`. It is a terrible idea.
 
+> [!NOTE]
+> Sure, a software-side Mutex could be used, but it won't protect you when you have multiple instances of your application running. It's a good idea to use a database-level lock, as it will work across all instances of your application, and it can be used in a distributed environment as well.
+
 ## Conclusion
 We've seen how easily race conditions can sneak into our code, and how tricky they can be to squash. From simple views counters to game economies, we've explored practical solutions like atomic updates and database constraints.
 
