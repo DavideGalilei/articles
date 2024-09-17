@@ -64,24 +64,7 @@ Next, let’s create a simple REST API:
 - `/view/<post id>` will increase the post’s views by one
 
 ```python
-# ... omitted imports
-
-@asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    async with RegisterTortoise(
-        app,
-        db_url="postgres://postgres:password@database:5432/race_condition_test",
-        modules={"models": ["worker"]},
-        generate_schemas=True,
-    ):
-        try:
-            print("Creating test blog post...")
-            await Post.create(id=1, title="Example blog post", content="Hello! This is a blog post", views=0)
-            print("Test blog post created")
-        except Exception:
-            print("Blog post already exists")
-
-        yield
+# ... omitted boilerplate
 
 app = FastAPI(lifespan=lifespan, debug=True)
 
