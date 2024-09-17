@@ -85,12 +85,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(lifespan=lifespan, debug=True)
 
-class Post(Model):
-    id = fields.IntField(pk=True)
-    title = fields.CharField(max_length=255)
-    content = fields.TextField(max_length=4096)
-    views = fields.BigIntField(default=0)
-
 @app.get("/post/{post_id}")
 async def get_post(post_id: int):
     post = await Post.get(id=post_id)
