@@ -234,7 +234,7 @@ Another day, another call. “What is it, now?”, I think to myself before answ
 I make an attempt at figuring out what’s wrong. Every time the `/view/<post id>` endpoint is called, the row is being locked until the transaction ends. Analogously, it’s as if all the requests towards that endpoint get queued one by one. Computers are fast, but locking and unlocking a mutex is a very expensive operation.
 
 > [!TIP]
-> Namely, the following line of code is waiting for the row to get unlocked before being able to select it. This is the cause of the delays and malfunctioning. Concurrency is impaired because of this very bottleneck.
+> Namely, the following line of code is waiting for the row to get unlocked before being able to select it. This is the cause of the delays. Concurrency is impaired because of this very bottleneck.
 
 ```python
     ...
@@ -244,9 +244,9 @@ I make an attempt at figuring out what’s wrong. Every time the `/view/<post id
 
 Once again, I try to look for a solution.
 
-With a simple research on a search engine of “ways to avoid select for update incrementing counter”, the following [StackOverflow answer](https://stackoverflow.com/a/24408531/13673785) comes up.
+After a simple search of “ways to avoid select for update incrementing counter”, this [StackOverflow answer](https://stackoverflow.com/a/24408531/13673785) comes up.
 
-The correct SQL Query should be atomic, as in it should update the value atomically. Simply put, it means that adding one actually adds one to the value, in practice.
+The correct SQL Query should be atomic, as in it should update the value atomically. Simply put, it means that adding one actually adds one to the value, in practice.  
 
 > [!TIP]
 > The `UPDATE` statement is atomic by nature. It performs the read and write operations in a single, indivisible step. This eliminates the need for explicit row-level locking. This approach scales much better under high concurrency, as it doesn't hold locks for extended periods.
