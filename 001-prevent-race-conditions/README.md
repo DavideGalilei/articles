@@ -97,21 +97,21 @@ UPDATE "post" SET "views"=1 WHERE "id"=1</pre>
 So far so good. Let’s test our code!
 
 ```shell
-$ curl -X 'GET' 'http://127.0.0.1:8000/post/1'
+$ curl -X GET 'http://127.0.0.1:8000/post/1'
 {"post_id":1,"title":"Example blog post","content":"Hello! This is a blog post","views":0}
 ```
 
 Nice, the post has 0 views. Let’s try to increase them and fetch the post again.
 
 ```shell
-$ curl -X 'POST' 'http://127.0.0.1:8000/view/1'
+$ curl -X POST 'http://127.0.0.1:8000/view/1'
 {"current_views":1}
-$ curl -X 'POST' 'http://127.0.0.1:8000/view/1'
+$ curl -X POST 'http://127.0.0.1:8000/view/1'
 {"current_views":2}
-$ curl -X 'POST' 'http://127.0.0.1:8000/view/1'
+$ curl -X POST 'http://127.0.0.1:8000/view/1'
 {"current_views":3}
 
-$ curl -X 'GET' 'http://127.0.0.1:8000/post/1'
+$ curl -X GET 'http://127.0.0.1:8000/post/1'
 {"post_id":1,"title":"Example blog post","content":"Hello! This is a blog post","views":3}
 ```
 
