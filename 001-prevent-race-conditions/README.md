@@ -1,4 +1,4 @@
-# Think you're safe from Race Conditions? Think again
+# Understanding and Preventing Race Conditions in Web Applications
 
 This article aims to correct a subtle but dangerous bad practice that is often overlooked. I will demonstrate practical examples using **Python**, **FastAPI** and **PostgreSQL**, and I will provide various solutions for the problem, each with its own trade-offs. I will role-play as a junior freelance developer, making it easier to understand the chain of thought.
 
@@ -33,7 +33,7 @@ A race condition occurs when two or more operations compete to access shared res
 
 The main takeaway is that race conditions can cause data corruption, crashes, or **<mark>security vulnerabilities</mark>**.
 
-As a matter of fact, there have been more than 174 vulnerabilities reported in 2024 alone, with some of them being of [**high severity**](https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=race+condition&search_type=all) (source: [NIST](https://nvd.nist.gov/vuln/search/statistics?form_type=Basic&results_type=statistics&query=race+condition&search_type=all&isCpeNameSearch=false))
+As a matter of fact, there have been more than 174 vulnerabilities reported in 2024 alone       , with some of them being of [**high severity**](https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=race+condition&search_type=all) (source: [NIST](https://nvd.nist.gov/vuln/search/statistics?form_type=Basic&results_type=statistics&query=race+condition&search_type=all&isCpeNameSearch=false))
 
 ![Race conditions statistics graph. Source: NIST](assets/race_conditions_statistics_source_NIST.png)
 
