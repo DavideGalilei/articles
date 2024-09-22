@@ -364,7 +364,7 @@ Sure enough, there are multiple ways.
         return {"user_id": player.id, "money": player.money, "level": player.level}
     ```
 
-    > ![IMPORTANT]
+    > [!IMPORTANT]
     > **Important:** in your real application the endpoint must be authenticated. It is a **really bad** practice to allow any user to pass an arbitrary, unsanitized, id to your API.
 
 2. **Database-level constraints:** PostgreSQL offers the possibility to add **constraints** to your columns. We could write our `CREATE` statement as such:
