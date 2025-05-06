@@ -1,3 +1,11 @@
+---
+title: 'Understanding and Preventing Race Conditions in Web Applications'
+date: '16 September 2024'
+tags: ['blog', 'python', 'security', 'fastapi', 'databases']
+visibility: 'public'
+description: 'Spot and fix race conditions in Python, FastAPI, and PostgreSQL to prevent data corruption and security issues'
+---
+
 # Understanding and Preventing Race Conditions in Web Applications
 
 This article aims to correct a subtle but dangerous bad practice that is often overlooked. I will demonstrate practical examples using **Python**, **FastAPI** and **PostgreSQL**, and I will provide various solutions for the problem, each with its own trade-offs. I will role-play as a junior freelance developer, making it easier to understand the chain of thought.
