@@ -13,14 +13,14 @@ This article aims to correct a subtle but dangerous bad practice that is often o
 The following code is **unsafe**: can you spot why?
 ```python
 class BuyItemRequest(BaseModel):
-    item_uuid: int
+    item_id: int
 
 @app.post("/buy_item")
 async def buy_item(
     request: BuyItemRequest,
     user_id: int = Depends(get_user_from_jwt),
 ):
-    item = await Item.get(uuid=request.item_uuid)
+    item = await Item.get(id=request.item_id)
     user = await User.get(id=user_id)
 
     if user.money < item.cost:
