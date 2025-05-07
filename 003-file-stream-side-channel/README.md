@@ -23,7 +23,7 @@ By being able to read a stream of bytes in real time, such as the stream of a `s
 
 ## What is going on?
 
-To have a better understanding of how this works, try to play around with the widget below.
+To have a better understanding of how this works, try to play around with the widget below. It doesn't actually send requests to the server, but simulates locally the stream of a file being loaded.
 
 > [!NOTE]
 > Widget removed in the GitHub version of this article. Try it [here](https://blog.gavide.dev/blog/file-stream-side-channel).
@@ -34,6 +34,7 @@ To have a better understanding of how this works, try to play around with the wi
 - Compress the data to reduce the delay of the stream
 - Multiple streams for faster decoding, e.g. multiple images being loaded in background
 - Checksum to verify the stream integrity, or error correction codes
+- Use encryption
 
 ## Potential Issues
 Security through obscurity is never a good idea, it only makes it harder to reverse engineer, not impossible. If your browser can read the stream, so can a reverse engineer with a bit of patience.
