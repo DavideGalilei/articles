@@ -1,0 +1,207 @@
+---
+title: 'ESP32 and Termux'
+date: '9 October 2025'
+tags: ['blog', 'embedded', 'termux', 'esp32', 'micropython', 'fun']
+visibility: 'public'
+description: 'Documenting my journey in trying to use my ESP32 on my phone through Termux'
+thumbnail: ./media/thumbnail.jpg
+---
+
+<figure>
+    <enhanced:img src="./media/thumbnail.jpg" alt="Screenshot of Termux showing the flash command" style="width:100%; max-width:500px; height:auto; display:block;" />
+</figure>
+
+If you're like me, you might enjoy being able to do things on your phone that you might otherwise do from your computer.
+
+I wanted to play around with my `ESP32-WROOM-32` development board, but apparently there is no online guide specifically for Termux, so I want to document the steps that worked for me as a future reference for myself and others.
+
+> ⚠️ **DISCLAIMER**
+>
+> **I am not responsible for any damage** that could occurr by following this guide. This is written for educational purposes.
+
+## Requirements
+- any ESP32 development board will do, but in my case I will use a `ESP32-WROOM-32`
+- an [OTG adapter](https://en.wikipedia.org/wiki/USB_On-The-Go)
+- a USB-A cable (in my case micro-USB, but it depends by your board)
+- a phone with Termux installed, [ideally from F-Droid](https://f-droid.org/packages/com.termux/)
+
+> ❗️ **NOTE**
+>
+> Make sure that your USB-A cable supports data transfer. This is crucial.
+>
+> Many cables I tried either did not support data transfer or were not delivering the power correctly, [making the board brownout](https://en.wikipedia.org/wiki/Brownout_(electricity)).
+
+## Getting started
+The first thing you need to do is installing [`TCPUART transparent Bridge`](https://play.google.com/store/apps/details?id=com.hardcodedjoy.tcpuart). This application will act as a bridge between the android Serial USB API and Termux. It will expose a local two-way TCP server that will forward the data to and from `UART`.
+
+> Installing a third party application is not ideal. An alternative could have been using `termux-usb` through [`Termux-API`](https://f-droid.org/packages/com.termux.api/), but I was facing constant disconnections and setup issues, so I settled for this app.
+
+<figure>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-start; margin:1em 0;">
+        <div style="flex:1 1 200px; max-width:300px;">
+            <enhanced:img src="./media/tcpuart1.jpg" alt="tcpuart screenshot 1" style="width:100%; height:auto; display:block;" />
+            <figcaption style="font-size:0.9em; margin-top:0.4rem">TCPUART main screen</figcaption>
+        </div>
+        <div style="flex:1 1 200px; max-width:300px;">
+            <enhanced:img src="./media/tcpuart2.jpg" alt="tcpuart screenshot 2" style="width:100%; height:auto; display:block;" />
+            <figcaption style="font-size:0.9em; margin-top:0.4rem">After connecting the ESP32</figcaption>
+        </div>
+        <div style="flex:1 1 200px; max-width:300px;">
+            <enhanced:img src="./media/tcpuart3.jpg" alt="tcpuart screenshot 3" style="width:100%; height:auto; display:block;" />
+            <figcaption style="font-size:0.9em; margin-top:0.4rem">After starting the local TCP server</figcaption>
+        </div>
+    </div>
+    <figcaption>TCPUART app screenshots</figcaption>
+</figure>
+
+## TCPUART Setup
+- Set Baud Rate to `115200`
+- Press the `Connect` button
+- A prompt should appear (see the second screenshot). Click `OK`
+- Between `client` and `server`, choose `server`
+- Use `8080` as the port
+- Click the `Start` button
+
+## Termux setup
+Make sure you have the following termux packages installed. Run this command:
+```shell
+pkg install -y python esptool mpremote socat
+```
+
+We will then setup a TCP bridge virtual device file:
+```shell
+socat pty,link=$HOME/esp32,raw,echo=0 tcp:127.0.0.1:8080 &
+```
+
+If it was executed successfully, the command should not print any output and `socat` will run in background. A file named `esp32` will be created in the Termux home folder.
+
+## Resetting the ESP32
+We need to reset the `ESP32` memory, so we need to reboot it into **download mode**.
+
+![ESP32 WROOM 32 Pinout diagram, from https://www.teachmemicro.com/wp-content/uploads/2023/12/ESP32-pinout-diagram.jpg](./media/ESP32-pinout-diagram.jpg)
+
+- Hold the physical `BOOT` button on the board. The one on the bottom right in this image.
+- Press and release the `EN`/`ENABLE`/`RST`/`RESET` button (basically the other button)
+- Release the `BOOT` button
+- The device is now in download mode
+
+To reset the `ESP32`, run this command on Termux:
+```shell
+esptool --chip esp32 --port $HOME/esp32 --before no-reset --after no-reset erase-flash
+```
+
+<figure>
+    <enhanced:img src="./media/erase.jpg" alt="Screenshot of Termux showing the socat and erase commands" style="width:100%; max-width:500px; height:auto; display:block;" />
+</figure>
+
+## Flashing the Micropython firmware
+We now need to flash [Micropython](https://micropython.org/) on the `ESP32`.
+
+The firmware link is obtained from https://micropython.org/download/ESP32_GENERIC/.
+
+Run these commands on Termux to download and flash the firmware. Remember to **go into Download mode before running the second command**:
+```
+curl -L https://micropython.org/resources/firmware/ESP32_GENERIC-20250911-v1.26.1.bin -o esp32-micropython.bin
+
+esptool --chip esp32 --port $HOME/esp32 --before no-reset --after no-reset write-flash -z 0x1000 esp32-micropython.bin
+```
+
+> ❗️ **IMPORTANT**
+>
+> After the flash is complete, press and release the `ENABLE`/`RESET` button in the board to exit download mode.
+
+<figure>
+    <enhanced:img src="./media/flash.jpg" alt="Screenshot of Termux showing the flash command" style="width:100%; max-width:500px; height:auto; display:block;" />
+</figure>
+
+#### 🎉 Success
+Congratulations, Micropython should now be flashed in your board.
+
+## Next steps
+If you want to try the Micropython REPL, run this command:
+```shell
+mpremote connect port:$HOME/esp32 repl
+```
+
+By the way, there is also `minicom` if you want to interact with the `REPL`:
+```shell
+minicom -D $HOME/esp32 -b 115200  # Quit using Ctrl-A Q
+```
+
+If you want to upload a program that will run on the ESP32 boot, without the need for it to be connected to your phone:
+- Create a file named `program.py` with `nano` (or any other editor) and put it in your `$HOME` directory
+- Inside it, write the code you want. The code I will be using is:
+```python
+import machine
+import time
+
+# Built-in LED on most ESP32 boards (GPIO 2)
+led = machine.Pin(2, machine.Pin.OUT)
+
+print("Starting LED blink...")
+print("Press Ctrl+C to stop")
+
+try:
+    while True:
+        led.on()
+        print("LED ON")
+        time.sleep(1)
+        led.off()
+        print("LED OFF")
+        time.sleep(1)
+except KeyboardInterrupt:
+    led.off()
+    print("Stopped")
+```
+
+It will blink the builtin LED on the board every second, and will output the logs in the UART serial connection.
+
+- Uploading the code:
+```shell
+mpremote connect port:$HOME/esp32 cp $HOME/program.py :main.py
+```
+
+- To run it immediately:
+```shell
+mpremote connect port:$HOME/esp32 run $HOME/program.py
+```
+
+<figure>
+    <enhanced:img src="./media/run.jpg" alt="Screenshot of Termux showing the micropython REPL" style="width:100%; max-width:500px; height:auto; display:block;" />
+</figure>
+
+### Useful `mpremote` commands
+
+#### List files
+```
+mpremote connect port:$HOME/esp32 fs ls
+```
+
+#### View a file
+```
+mpremote connect port:$HOME/esp32 fs cat main.py
+```
+
+#### Delete a file
+```
+mpremote connect port:$HOME/esp32 fs rm unwanted.py
+```
+
+#### Interactive REPL
+```
+mpremote connect port:$HOME/esp32 repl
+```
+
+
+
+## Conclusion
+Termux is linked against [`Bionic Libc`](https://android.googlesource.com/platform/bionic/), and in my phone specifically it runs on `aarch64`, so many prebuilt binaries will not work. This means that I could not compile firmware binaries from scratch, as I could not setup a toolchain for it.
+
+What I tried that either did not work or I gave up on trying:
+- Running `PlatformIO`: the `xtensa-esp32-elf-g++` binary would not execute, as it is compiled for another architecture
+- An Ubuntu proot with `PlatformIO`
+- Using [`esp-idf`](https://github.com/espressif/esp-idf)
+- Rust's `espflash`, `espup`, `esp-rs`
+- To connect to the `UART` serial: `termux-usb` and `Termux: API`. It would disconnect often and get a new device identifier each time, requiring to accept the permission each time. It was not a very practical solution, and I did not even get to making the `UART` communicate.
+
+I believe that there exists a better solution than using a third party app to use the `UART` serial connection. However, I was not able to make it work.

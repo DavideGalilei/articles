@@ -11,5 +11,9 @@
 
     This article discusses a novel approach to obfuscating JavaScript code in web pages using file stream side-channel techniques. It explains how to encode JavaScript into binary code, translating it into delays that can be measured and decoded back into executable code. The article includes a demo and explores potential improvements and issues with this method.
 
+- [ESP32 and Termux](004-esp32-and-termux/)
+
+    This article walks through using an ESP32 development board directly from an Android phone via Termux. It covers bridge setup with TCPUART and socat, flashing MicroPython with esptool, and interacting with the board through mpremote, while noting practical pitfalls like cable reliability and ARM binary compatibility.
+
 # License
 All my articles contained in this repository are licensed under the [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/) license.
